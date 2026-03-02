@@ -1,71 +1,89 @@
-🚦 Helmet Detection System using YOLOv8
-<p align="center"> <img src="https://img.shields.io/badge/YOLOv8-Ultralytics-red?style=for-the-badge"> <img src="https://img.shields.io/badge/Python-3.9+-blue?style=for-the-badge"> <img src="https://img.shields.io/badge/OpenCV-Computer%20Vision-green?style=for-the-badge"> <img src="https://img.shields.io/badge/Status-Completed-success?style=for-the-badge"> </p> <p align="center"> 🚀 Hệ thống phát hiện người đi xe máy không đội mũ bảo hiểm trong thời gian thực<br> Ứng dụng Computer Vision & Deep Learning với YOLOv8 </p>
-📌 Tổng quan dự án
+# 🚦 Helmet Detection System using YOLOv8
 
-Hệ thống sử dụng mô hình YOLOv8 để:
+<p align="center">
+  <img src="https://img.shields.io/badge/YOLOv8-Ultralytics-red?style=for-the-badge">
+  <img src="https://img.shields.io/badge/Python-3.9+-blue?style=for-the-badge">
+  <img src="https://img.shields.io/badge/OpenCV-Computer%20Vision-green?style=for-the-badge">
+  <img src="https://img.shields.io/badge/Architecture-Dual--Model-blueviolet?style=for-the-badge">
+  <img src="https://img.shields.io/badge/Status-Completed-success?style=for-the-badge">
+</p>
 
-✔ Phát hiện người (person)
-✔ Phát hiện mũ bảo hiểm (helmet)
-✔ (Tùy chọn) phát hiện xe máy (motorcycle)
-✔ Xác định người không đội mũ bảo hiểm (NO_HELMET)
-✔ Hiển thị bounding box màu trực quan
-✔ Lưu ảnh vi phạm tự động
+<p align="center">
+  🚀 Hệ thống phát hiện người đi xe máy <b>không đội mũ bảo hiểm</b> theo thời gian thực <br>
+</p>
 
-🎥 Demo hệ thống
-<p align="center"> <img src="assets/demo.gif" width="700"> </p>
+---
 
-🟢 Xanh → Có mũ bảo hiểm
-🔴 Đỏ → Không đội mũ bảo hiểm
-📈 Hiển thị FPS realtime
+## 📌 Tổng quan
 
-🧠 Mô hình sử dụng
+Hệ thống sử dụng **mô hình hai tầng (Dual-Model Architecture)** nhằm tăng độ chính xác và tính linh hoạt trong phát hiện.
 
-Model: YOLOv8n
+Hệ thống có khả năng:
 
-Dataset: 3,835 ảnh
+- 👤 Phát hiện người (person)
+- 🏍 Phát hiện xe máy (motorcycle)
+- 🪖 Phát hiện mũ bảo hiểm (helmet)
+- ❌ Phát hiện không đội mũ (no-helmet)
+- 🎯 Xác định người đi xe máy không đội mũ bảo hiểm
+- 💾 Lưu ảnh vi phạm tự động
 
-Classes:
+---
 
-person
+## 🧠 Kiến trúc mô hình (Dual-Model Architecture)
 
-helmet
+### 🔹 Model 1 – Custom Helmet Model
 
-no-helmet
+- File: `models/best.pt`
+- Huấn luyện trên dataset tự xây dựng
+- Classes:
+  - `helmet`
+  - `no-helmet`
+  - `person`
 
-📊 Kết quả đánh giá
-Metric	Giá trị
-mAP@0.5	0.605
-Precision	0.624
-Recall	0.594
+Model này chuyên dùng để phân loại tình trạng đội mũ bảo hiểm.
 
-📁 File model:
+---
 
-models/best.pt
-🔍 Logic phát hiện NO_HELMET
+### 🔹 Model 2 – Pretrained COCO Model
 
-Detect tất cả person
+- File: `yolov8n.pt`
+- Pretrained từ Ultralytics (COCO Dataset)
+- Classes sử dụng:
+  - `person`
+  - `motorcycle`
 
-Trích xuất vùng đầu (35% phía trên bounding box)
+Model này dùng để phát hiện người và xe máy trong khung hình.
 
-Kiểm tra xem có helmet nằm trong vùng này hay không
+---
 
-Nếu không có → gắn nhãn NO_HELMET
+## ⚙️ Cơ chế hoạt động
 
-Lưu ảnh vi phạm
+1. Model 2 phát hiện `person` và `motorcycle`
+2. Xác định người đang điều khiển xe máy
+3. Model 1 kiểm tra vùng đầu của `person`
+4. Nếu không phát hiện `helmet` → gắn nhãn **NO_HELMET**
+5. Lưu ảnh vi phạm
 
-💾 Lưu ảnh vi phạm
+---
 
-Khi phát hiện người không đội mũ:
+## 📊 Kết quả đánh giá (Model 1)
 
-outputs/violations/
+| Metric | Giá trị |
+|--------|----------|
+| mAP@0.5 | 0.605 |
+| Precision | 0.624 |
+| Recall | 0.594 |
 
-Tên file chứa timestamp để dễ truy xuất.
+Dataset huấn luyện: **3,835 ảnh**
 
-🗂 Cấu trúc thư mục
+## 🗂 Cấu trúc thư mục
+
+```
 helmet_detection/
 │
 ├── models/
-│   └── best.pt
+│   ├── best.pt
+│   └── yolov8n.pt
 │
 ├── src/
 │   └── detect.py
@@ -75,77 +93,68 @@ helmet_detection/
 │
 ├── requirements.txt
 └── README.md
-⚙️ Cài đặt môi trường
-1️⃣ Tạo môi trường ảo
+```
+
+---
+
+## ⚙️ Cài đặt môi trường
+
+### 1️⃣ Tạo môi trường ảo
+
+```bash
 python -m venv .venv
-2️⃣ Kích hoạt môi trường
+```
+
+### 2️⃣ Kích hoạt môi trường
 
 Windows:
 
+```bash
 .venv\Scripts\activate
+```
 
-MacOS / Linux:
+### 3️⃣ Cài đặt thư viện
 
-source .venv/bin/activate
-3️⃣ Cài đặt thư viện
+```bash
 pip install -r requirements.txt
-▶️ Cách chạy chương trình
-🔹 Chạy bằng Webcam
+```
+
+---
+
+## ▶️ Chạy chương trình
+
+```bash
 python src/detect.py
-🔹 Chạy bằng video
+```
 
-Chỉnh trong file detect.py:
+---
 
-source = "video.mp4"
-📊 Đánh giá mô hình
+## 🎯 Ứng dụng thực tế
 
-Được đánh giá trên tập validation với:
+- 🚦 Hệ thống camera giao thông
+- 🏭 Giám sát khu công nghiệp
+- 🏙 Smart City
+- 📋 Hỗ trợ xử phạt tự động
 
-mAP@0.5
+---
 
-Precision
+## 👥 Phân công nhóm
 
-Recall
+| Thành viên | Vai trò |
+|------------|----------|
+| **Lê Nguyễn Bảo Trân** | Dataset & Model Training |
+| **Võ Gia Huy** | Detection Logic & Realtime System |
+| **Nguyễn Quốc Tường** | Demo & Optimization |
 
-Confusion Matrix
+---
 
-PR Curve
+## 🏁 Kết luận
 
-Có thể cải thiện thêm bằng:
+Hệ thống áp dụng kiến trúc **Dual-Model** giúp nâng cao độ chính xác trong phát hiện vi phạm đội mũ bảo hiểm.
 
-Tăng imgsz
+Dự án thể hiện năng lực:
 
-Train thêm epochs
-
-Sử dụng YOLOv8s hoặc YOLOv8m
-
-Augmentation mạnh hơn
-
-👥 Phân công nhóm
-Thành viên	Vai trò
-Lê Nguyễn Bảo Trân	Dataset & Training (AI Core)
-Võ Gia Huy	Detection Logic & Realtime System
-Nguyễn Quốc Tường	Demo & Optimization
-🎯 Ứng dụng thực tế
-
-Hệ thống camera giao thông
-
-Giám sát khu công nghiệp
-
-Tích hợp vào hệ thống Smart City
-
-Hỗ trợ xử phạt tự động
-
-🏁 Kết luận
-
-Hệ thống có khả năng phát hiện người không đội mũ bảo hiểm trong thời gian thực với độ chính xác ở mức chấp nhận được cho ứng dụng thực tế.
-
-Dự án thể hiện khả năng:
-
-Xây dựng dataset
-
-Huấn luyện mô hình Deep Learning
-
-Thiết kế logic hậu xử lý
-
-Tối ưu hệ thống realtime
+- Xây dựng dataset tùy chỉnh
+- Huấn luyện và tối ưu YOLOv8
+- Thiết kế hệ thống hai tầng
+- Xây dựng pipeline realtime hoàn chỉnh
