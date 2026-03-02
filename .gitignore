@@ -1,0 +1,18 @@
+# Python virtual environment
+/.venv/
+.venv/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Model weights (nếu không muốn push)
+# *.pt
+
+# VSCode
+.vscode/
+
+# OS files
+.DS_Store
