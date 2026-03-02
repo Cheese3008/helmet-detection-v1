@@ -13,6 +13,15 @@
 </p>
 
 ---
+## 👥 Phân công nhóm
+
+| Thành viên | Vai trò |
+|------------|----------|
+| **Lê Nguyễn Bảo Trân** | Dataset & Model Training |
+| **Võ Gia Huy** | Detection Logic & Realtime System |
+| **Nguyễn Quốc Tường** | Demo & Optimization |
+
+---
 
 ## 📌 Tổng quan
 
@@ -135,16 +144,6 @@ python src/detect.py
 - 🏭 Giám sát khu công nghiệp
 - 🏙 Smart City
 - 📋 Hỗ trợ xử phạt tự động
-
----
-
-## 👥 Phân công nhóm
-
-| Thành viên | Vai trò |
-|------------|----------|
-| **Lê Nguyễn Bảo Trân** | Dataset & Model Training |
-| **Võ Gia Huy** | Detection Logic & Realtime System |
-| **Nguyễn Quốc Tường** | Demo & Optimization |
 
 ---
 
